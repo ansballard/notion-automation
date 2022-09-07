@@ -25,6 +25,8 @@ const DAYS = [
 
 const pages = await getRecurringPages(DB_ID)
 
+console.log(pages, JSON.stringify(pages, null, 2))
+
 for(const page of pages) {
   /** @type {string[]} */
   const recurringInterval = page.properties[RECURRING_INTERVAL_PROPERTY_KEY]?.multi_select?.map(({ name }) => name)
