@@ -25,7 +25,7 @@ const DAYS = [
 
 const pages = await getRecurringPages(DB_ID)
 
-console.log(pages, JSON.stringify(pages, null, 2))
+console.log(typeof process.env.DB_ID, typeof process.env.NOTION_TOKEN, pages, JSON.stringify(pages, null, 2))
 
 for(const page of pages) {
   /** @type {string[]} */
