@@ -19,5 +19,8 @@ jobs:
       with:
         node-version: latest
         cache: 'npm'
+      env:
+        NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        DB_ID: ${{ secrets.DB_ID }}
     - run: npm ci
     - run: npm start
