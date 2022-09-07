@@ -1,0 +1,21 @@
+{
+  "name": "@ansballard/notion-automation",
+  "version": "0.0.1",
+  "description": "Basic notion API to automate things like recurring tasks",
+  "private": true,
+  "main": "main.mjs",
+  "module": "main.mjs",
+  "scripts": {
+    "start": "node -r dotenv/config main.mjs"
+  },
+  "keywords": [],
+  "author": "Aaron Ballard (ans.ballard@gmail.com)",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^3.2.10"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.14",
+    "dotenv": "^16.0.2"
+  }
+}
