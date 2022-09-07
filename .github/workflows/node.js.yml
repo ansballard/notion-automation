@@ -20,8 +20,10 @@ jobs:
       with:
         node-version: latest
         cache: 'npm'
-      env:
-        NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-        DB_ID: ${{ secrets.DB_ID }}
+    - name: create env file
+      run: |
+        touch .env
+        echo NOTION_TOKEN=${{ secrets.NOTION_TOKEN }} >> .env
+        echo DB_ID=${{ secrets.DB_ID }} >> .env
     - run: npm ci
     - run: npm start
