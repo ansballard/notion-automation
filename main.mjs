@@ -1,4 +1,18 @@
-import { getRecurringPages, updatePage, addComment } from "./api.mjs";
+import {
+  getRecurringPages,
+  updatePage,
+  addComment,
+  getPage,
+  getBlockChildren,
+} from "./api.mjs";
+import mri from "mri";
+
+const { dry } = mri(process.argv.slice(2), {
+  alias: {
+    d: "dry",
+  },
+  boolean: ["dry"],
+});
 
 const DB_ID = process.env.DB_ID;
 
@@ -36,6 +50,13 @@ for (const page of pages) {
 
   const userToNotify = page.properties[USER_NOTIFY_PROPERTY_KEY]?.people[0];
   const currentStatus = page.properties[STATUS_PROPERTY_KEY]?.select.name;
+
+  !!recurringInterval &&
+    console.log(
+      (await getBlockChildren(page.id)).results.map((s) =>
+        JSON.stringify(s.to_do, null, 2)
+      )
+    );
 
   // skip page if
   // - DUE_TIME isn't a prop

@@ -5,7 +5,7 @@ import _fetch from "node-fetch";
 
 /**
  * @param {import('./types.mjs').RequestInfo} url
- * @param {import('./types.mjs').RequestInit} init
+ * @param {import('./types.mjs').RequestInit} [init]
  * @returns {Promise<any>}
  */
 export const fetch = async (url, init) => {
@@ -73,6 +73,22 @@ export const updatePage = async (id, properties) => {
     },
   });
 };
+
+/**
+ * @param {string} id
+ * @returns {Promise<import('./types.mjs').Page>}
+ */
+export const getPage = (id) => {
+  return fetch(`https://api.notion.com/v1/pages/${id}`)
+}
+
+/**
+ * @param {string} id
+ * @returns {Promise<import('./types.mjs').Block>}
+ */
+export const getBlockChildren = (id) => {
+  return fetch(`https://api.notion.com/v1/blocks/${id}/children`)
+}
 
 export const addComment = (id, richText) => {
   return fetch(`https://api.notion.com/v1/comments`, {

@@ -96,3 +96,13 @@ export type Page = {
   };
   url: string;
 };
+
+export type Block = {
+  type: string;
+  results: Array<{
+    type: "to_do";
+    to_do: {
+      checked: boolean;
+    };
+  }>;
+};

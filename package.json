@@ -13,6 +13,7 @@
   "author": "Aaron Ballard (ans.ballard@gmail.com)",
   "license": "ISC",
   "dependencies": {
+    "mri": "^1.2.0",
     "node-fetch": "^3.2.10"
   },
   "devDependencies": {
