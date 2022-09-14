@@ -4,6 +4,77 @@ export type RequestInit =
   | (Omit<_RequestInit, "body"> & { body: any })
   | undefined;
 export { RequestInfo, Response };
+
+export type ApiParams = {
+  token: string;
+  db: string;
+  dry: boolean;
+  verbose: boolean;
+};
+
+export interface Api extends ApiParams {
+  queryDatabase(filter?: QueryFilter, sorts?: QuerySort[]): Promise<Page[]>;
+  getRecurringPages(): Promise<Page[]>;
+  updatePage(id, properties): Promise<Page>;
+  getPage(id): Promise<Page>;
+  getChildBlocks(id): Promise<Block>;
+  addComment(id, richText): Promise<any>;
+}
+
+export type Fetch = (
+  url: RequestInfo,
+  init: RequestInit,
+  env: ApiParams,
+  mutable: Boolean
+) => Promise<unknown>;
+export type QueryDatabase = (
+  filter: QueryFilter,
+  sorts: QuerySort[],
+  env: ApiParams
+) => Promise<Page[]>;
+export type GetRecurringPages = (env) => Promise<Page[]>;
+export type UpdatePage = (
+  id: string,
+  properties: any,
+  env: ApiParams
+) => Promise<Page>;
+export type GetPage = (id: string, env: ApiParams) => Promise<Page>;
+export type GetChildBlocks = (id: string, env: ApiParams) => Promise<Block>;
+export type addComment = (
+  id: string,
+  richText: any,
+  env: ApiParams
+) => Promise<any>;
+
+export enum PropertyKeys {
+  RECURRING_INTERVAL = "recurringInterval",
+  DUE_DATE = "dueDate",
+  USER_NOTIFY = "userNotify",
+  STATUS = "status",
+}
+export enum Status {
+  TODO = "todo",
+  DONE = "done",
+}
+export enum TimeZone {
+  REGION = "region",
+  OFFSET = "offset",
+}
+export type UtilsParams = {
+  propertyKeys: {
+    [key in PropertyKeys]: string;
+  };
+  status: {
+    [key in Status]: string;
+  };
+  timeZone: {
+    [TimeZone.REGION]: string;
+    [TimeZone.OFFSET]: number;
+  };
+};
+
+export interface Utils extends UtilsParams {}
+
 export enum QueryFilterPropertyType {
   RICH_TEXT = "rich_text",
   PHONE_NUMBER = "phone_number",
@@ -52,7 +123,7 @@ export enum QueryFilterOperator {
 }
 export type QueryFilter = {
   property: string;
-  // [key in QueryFilterPropertyType]: {
+  // [key in QueryFilterPropertyType]: QueryFilterCondition
   [key: string]: QueryFilterCondition;
 };
 export type CompoundQueryFilter = {

@@ -1,19 +1,16 @@
-import {
-  getRecurringPages,
-  updatePage,
-  addComment,
-  getPage,
-  getBlockChildren,
-} from "./api.mjs";
+import API from "./api.mjs";
+import Utils from "./utils.mjs";
 import mri from "mri";
 
-const { dry } = mri(process.argv.slice(2), {
+const { dry, verbose } = mri(process.argv.slice(2), {
   alias: {
     d: "dry",
+    v: "verbose",
   },
-  boolean: ["dry"],
+  boolean: ["dry", "verbose"],
 });
 
+const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const DB_ID = process.env.DB_ID;
 
 const RECURRING_INTERVAL_PROPERTY_KEY = "Recurring Interval";
@@ -37,7 +34,15 @@ const DAYS = [
   "Saturday",
 ];
 
-const pages = await getRecurringPages(DB_ID);
+const { getRecurringPages, updatePage, addComment, getChildBlocks } = API({
+  db: DB_ID,
+  token: NOTION_TOKEN,
+  dry,
+  verbose,
+});
+
+const pages = await getRecurringPages();
+verbose && console.log(`Iterating ${pages.length} Pages`);
 
 for (const page of pages) {
   /** @type {string[]} */
@@ -50,13 +55,6 @@ for (const page of pages) {
 
   const userToNotify = page.properties[USER_NOTIFY_PROPERTY_KEY]?.people[0];
   const currentStatus = page.properties[STATUS_PROPERTY_KEY]?.select.name;
-
-  !!recurringInterval &&
-    console.log(
-      (await getBlockChildren(page.id)).results.map((s) =>
-        JSON.stringify(s.to_do, null, 2)
-      )
-    );
 
   // skip page if
   // - DUE_TIME isn't a prop
