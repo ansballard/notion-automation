@@ -1,4 +1,4 @@
-import _fetch from 'node-fetch'
+import _fetch from "node-fetch";
 
 /** @typedef {import('./types.mjs').Page} Page */
 /** @typedef {import('./types.mjs').Database} Database */
@@ -13,14 +13,14 @@ export const fetch = async (url, init) => {
     ...(init || {}),
     body: init?.body ? JSON.stringify(init.body) : null,
     headers: {
-      ...init?.headers || {},
+      ...(init?.headers || {}),
       Authorization: `Bearer ${process.env.NOTION_TOKEN}`,
-      'Content-Type': 'application/json',
-      'Notion-Version': '2021-08-16'
-    }
-  })
-  return response.json()
-}
+      "Content-Type": "application/json",
+      "Notion-Version": "2021-08-16",
+    },
+  });
+  return response.json();
+};
 
 /**
  * @param {string} id
@@ -28,28 +28,36 @@ export const fetch = async (url, init) => {
  * @param {import('./types.mjs').QuerySort[]} [sorts]
  * @returns {Promise<import('./types.mjs').Page[]>}
  */
-export const queryDatabase = async (id, filter = undefined, sorts = undefined) => {
+export const queryDatabase = async (
+  id,
+  filter = undefined,
+  sorts = undefined
+) => {
   /** @type {Database} */
-  const database = await fetch(`https://api.notion.com/v1/databases/${id}/query`, {
-    method: 'POST',
-    body: {
-      filter,
-      sorts
+  const database = await fetch(
+    `https://api.notion.com/v1/databases/${id}/query`,
+    {
+      method: "POST",
+      body: {
+        filter,
+        sorts,
+      },
     }
-  })
-  return database.results
-}
+  );
+  return database.results;
+};
 
 /**
  * @param {string} id
  * @returns {Promise<import('./types.mjs').Page[]>}
  */
-export const getRecurringPages = async (id) => queryDatabase(id, {
-  property: "Recurring",
-  checkbox: {
-    equals: true
-  }
-})
+export const getRecurringPages = async (id) =>
+  queryDatabase(id, {
+    property: "Recurring",
+    checkbox: {
+      equals: true,
+    },
+  });
 
 /**
  * @param {string} id
@@ -59,21 +67,21 @@ export const getRecurringPages = async (id) => queryDatabase(id, {
 export const updatePage = async (id, properties) => {
   /** @type {import('./types.mjs').Page} */
   return fetch(`https://api.notion.com/v1/pages/${id}`, {
-    method: 'PATCH',
+    method: "PATCH",
     body: {
-      properties
-    }
-  })
-}
+      properties,
+    },
+  });
+};
 
 export const addComment = (id, richText) => {
   return fetch(`https://api.notion.com/v1/comments`, {
-    method: 'POST',
+    method: "POST",
     body: {
       parent: {
-        page_id: id
+        page_id: id,
       },
-      rich_text: richText
-    }
-  })
-}
+      rich_text: richText,
+    },
+  });
+};
