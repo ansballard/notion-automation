@@ -1,5 +1,7 @@
 import API from "./api.mjs";
 import Utils from "./utils.mjs";
+import config from "./config.mjs";
+
 import mri from "mri";
 
 const { dry, verbose } = mri(process.argv.slice(2), {
@@ -9,20 +11,6 @@ const { dry, verbose } = mri(process.argv.slice(2), {
   },
   boolean: ["dry", "verbose"],
 });
-
-const NOTION_TOKEN = process.env.NOTION_TOKEN;
-const DB_ID = process.env.DB_ID;
-
-const RECURRING_INTERVAL_PROPERTY_KEY = "Recurring Interval";
-const DUE_DATE_PROPERTY_KEY = "Due Date";
-const USER_NOTIFY_PROPERTY_KEY = "Notify";
-const STATUS_PROPERTY_KEY = "Status";
-
-const TODO_STATUS = "To Do";
-const DONE_STATUS = "Done";
-
-const TIME_ZONE = "America/New_York";
-const TIME_ZONE_OFFSET = -4;
 
 const DAYS = [
   "Sunday",
@@ -35,55 +23,38 @@ const DAYS = [
 ];
 
 const { getRecurringPages, updatePage, addComment, getChildBlocks } = API({
-  db: DB_ID,
-  token: NOTION_TOKEN,
+  ...config,
+  dry,
+  verbose,
+});
+const { parsePage, log, nextDay } = Utils({
+  ...config,
   dry,
   verbose,
 });
 
 const pages = await getRecurringPages();
-verbose && console.log(`Iterating ${pages.length} Pages`);
+log(`Iterating ${pages.length} Pages`);
 
 for (const page of pages) {
-  /** @type {string[]} */
-  const recurringInterval = page.properties[
-    RECURRING_INTERVAL_PROPERTY_KEY
-  ]?.multi_select?.map(({ name }) => name);
+  const {
+    recurringInterval,
+    dueTime,
+    userToNotify,
+    currentStatus,
+    skip,
+  } = parsePage(page);
 
-  const dueTime = new Date(page.properties[DUE_DATE_PROPERTY_KEY]?.date?.start);
-  const newDueDate = new Date();
-
-  const userToNotify = page.properties[USER_NOTIFY_PROPERTY_KEY]?.people[0];
-  const currentStatus = page.properties[STATUS_PROPERTY_KEY]?.select.name;
-
-  // skip page if
-  // - DUE_TIME isn't a prop
-  // - RECURRING_INTERVAL isn't a prop or is empty
-  // - DUE_DATE is in the future
-  if (
-    !dueTime ||
-    !recurringInterval ||
-    recurringInterval.length < 1 ||
-    newDueDate < dueTime
-  ) {
+  if (skip) {
     continue;
   }
 
-  // Determine the next recurrence by setting the time in the current day
-  newDueDate.setHours(
-    dueTime.getHours() + TIME_ZONE_OFFSET,
-    dueTime.getMinutes(),
-    dueTime.getSeconds()
-  );
-  // if the time puts us in the past, increment by 1 day
-  if (newDueDate < new Date()) {
-    newDueDate.setMonth(newDueDate.getMonth(), newDueDate.getDate() + 1);
-  }
+  let newDueDate = nextDay(dueTime)
 
   for (let i = 0; i < DAYS.length; i++) {
     if (recurringInterval.includes(DAYS[newDueDate.getDay()])) {
       console.log(
-        `Next recurring ${DUE_DATE_PROPERTY_KEY} is ${
+        `Next recurring ${config.propertyKeys.dueDate} is ${
           DAYS[newDueDate.getDay()]
         }`
       );
@@ -93,19 +64,19 @@ for (const page of pages) {
         }, ${newDueDate.toTimeString()}`
       );
       await updatePage(page.id, {
-        [DUE_DATE_PROPERTY_KEY]: {
+        [config.propertyKeys.dueDate]: {
           date: {
             start: newDueDate.toISOString(),
-            time_zone: TIME_ZONE,
+            time_zone: config.timeZone.region,
           },
         },
-        [STATUS_PROPERTY_KEY]: {
+        [config.propertyKeys.status]: {
           select: {
-            name: TODO_STATUS,
+            name: config.status.todo,
           },
         },
       });
-      if (userToNotify && currentStatus === TODO_STATUS) {
+      if (userToNotify && currentStatus === config.status.todo) {
         await addComment(page.id, [
           {
             type: "mention",
@@ -123,7 +94,7 @@ for (const page of pages) {
           {
             type: "text",
             text: {
-              content: DONE_STATUS,
+              content: config.status.done,
             },
             annotations: {
               color: "red",
@@ -145,7 +116,7 @@ for (const page of pages) {
           DAYS[newDueDate.getDay()]
         } isn't set for recurring, checking next day...`
       );
-      newDueDate.setMonth(newDueDate.getMonth(), newDueDate.getDate() + 1);
+      newDueDate = nextDay(dueTime, newDueDate)
     }
   }
 }

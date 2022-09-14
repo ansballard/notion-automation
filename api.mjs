@@ -5,26 +5,17 @@ import _fetch from "node-fetch";
 /** @typedef {import('./types.mjs').Database} Database */
 
 /**
- * @param {import('./types.mjs').ApiParams} env
+ * @param {import('./types.mjs').Env} env
  * @returns {import('./types.mjs').Api}
  */
-export default (env) => {
-  const { db, token, dry, verbose } = env;
-
-  return {
-    db,
-    token,
-    dry,
-    verbose,
-
-    queryDatabase: (filter, sorts) => queryDatabase(filter, sorts, env),
-    getRecurringPages: () => getRecurringPages(env),
-    updatePage: (id, properties) => updatePage(id, properties, env),
-    getPage: (id) => getPage(id, env),
-    getChildBlocks: (id) => getChildBlocks(id, env),
-    addComment: (id, richText) => addComment(id, richText, env),
-  };
-};
+export default (env) => ({
+  queryDatabase: (filter, sorts) => queryDatabase(filter, sorts, env),
+  getRecurringPages: () => getRecurringPages(env),
+  updatePage: (id, properties) => updatePage(id, properties, env),
+  getPage: (id) => getPage(id, env),
+  getChildBlocks: (id) => getChildBlocks(id, env),
+  addComment: (id, richText) => addComment(id, richText, env),
+});
 
 const MUTATOR = true;
 const QUERY = false;
@@ -55,7 +46,7 @@ export async function fetch(url, init, env, mutable) {
     body: init?.body ? JSON.stringify(init.body) : null,
     headers: {
       ...headers,
-      Authorization: `Bearer ${env.token}`,
+      Authorization: `Bearer ${env.notionToken}`,
     },
   });
   return response.json();
@@ -67,7 +58,7 @@ export const queryDatabase = async (filter, sorts, env) => {
   /** @type {Database} */
   // @ts-ignore Casting fetch to a specific type
   const database = await fetch(
-    `https://api.notion.com/v1/databases/${env.db}/query`,
+    `https://api.notion.com/v1/databases/${env.databaseId}/query`,
     {
       method: "POST",
       body: {

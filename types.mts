@@ -5,47 +5,6 @@ export type RequestInit =
   | undefined;
 export { RequestInfo, Response };
 
-export type ApiParams = {
-  token: string;
-  db: string;
-  dry: boolean;
-  verbose: boolean;
-};
-
-export interface Api extends ApiParams {
-  queryDatabase(filter?: QueryFilter, sorts?: QuerySort[]): Promise<Page[]>;
-  getRecurringPages(): Promise<Page[]>;
-  updatePage(id, properties): Promise<Page>;
-  getPage(id): Promise<Page>;
-  getChildBlocks(id): Promise<Block>;
-  addComment(id, richText): Promise<any>;
-}
-
-export type Fetch = (
-  url: RequestInfo,
-  init: RequestInit,
-  env: ApiParams,
-  mutable: Boolean
-) => Promise<unknown>;
-export type QueryDatabase = (
-  filter: QueryFilter,
-  sorts: QuerySort[],
-  env: ApiParams
-) => Promise<Page[]>;
-export type GetRecurringPages = (env) => Promise<Page[]>;
-export type UpdatePage = (
-  id: string,
-  properties: any,
-  env: ApiParams
-) => Promise<Page>;
-export type GetPage = (id: string, env: ApiParams) => Promise<Page>;
-export type GetChildBlocks = (id: string, env: ApiParams) => Promise<Block>;
-export type addComment = (
-  id: string,
-  richText: any,
-  env: ApiParams
-) => Promise<any>;
-
 export enum PropertyKeys {
   RECURRING_INTERVAL = "recurringInterval",
   DUE_DATE = "dueDate",
@@ -60,7 +19,11 @@ export enum TimeZone {
   REGION = "region",
   OFFSET = "offset",
 }
-export type UtilsParams = {
+
+export type Config = {
+  databaseId: string;
+  notionToken: string;
+
   propertyKeys: {
     [key in PropertyKeys]: string;
   };
@@ -73,7 +36,67 @@ export type UtilsParams = {
   };
 };
 
-export interface Utils extends UtilsParams {}
+export type Options = {
+  dry: boolean;
+  verbose: boolean;
+};
+
+export type Env = Config & Options;
+
+export interface Api {
+  queryDatabase(filter?: QueryFilter, sorts?: QuerySort[]): Promise<Page[]>;
+  getRecurringPages(): Promise<Page[]>;
+  updatePage(id, properties): Promise<Page>;
+  getPage(id): Promise<Page>;
+  getChildBlocks(id): Promise<Block>;
+  addComment(id, richText): Promise<any>;
+}
+
+export type Fetch = (
+  url: RequestInfo,
+  init: RequestInit,
+  env: Env,
+  mutable: Boolean
+) => Promise<unknown>;
+export type QueryDatabase = (
+  filter: QueryFilter,
+  sorts: QuerySort[],
+  env: Env
+) => Promise<Page[]>;
+export type GetRecurringPages = (env) => Promise<Page[]>;
+export type UpdatePage = (
+  id: string,
+  properties: any,
+  env: Env
+) => Promise<Page>;
+export type GetPage = (id: string, env: Env) => Promise<Page>;
+export type GetChildBlocks = (id: string, env: Env) => Promise<Block>;
+export type addComment = (id: string, richText: any, env: Env) => Promise<any>;
+
+export interface Utils {
+  parsePage(page: Page): {
+    recurringInterval?: string[];
+    dueTime?: Date;
+    userToNotify?: string;
+    currentStatus?: Status;
+    skip: boolean;
+  };
+  log(...args: any[]): void;
+  nextDay(dueTime: Date, current?: Date): Date
+}
+
+export type ParsePage = (
+  page: Page,
+  env: Env
+) => {
+  recurringInterval?: string[];
+  dueTime?: Date;
+  userToNotify?: string;
+  currentStatus?: Status;
+  skip: boolean;
+};
+export type Log = (env: Env, ...args: any[]) => void;
+export type NextDay = (dueTime: Date, current: Date, env: Env) => Date;
 
 export enum QueryFilterPropertyType {
   RICH_TEXT = "rich_text",
