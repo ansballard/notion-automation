@@ -1,6 +1,6 @@
 /**
- * @param {import('./types.mjs').Env} env
- * @returns {import('./types.mjs').Utils}
+ * @param {import('./types.js').Env} env
+ * @returns {import('./types.js').Utils}
  */
 export default (env) => ({
   parsePage: (page) => parsePage(page, env),
@@ -8,7 +8,7 @@ export default (env) => ({
   nextDay: (dueTime, current) => nextDay(dueTime, current, env)
 });
 
-/** @type {import('./types.mjs').ParsePage} */
+/** @type {import('./types.js').ParsePage} */
 export const parsePage = (page, env) => {
   const recurringInterval = page.properties[
     env.propertyKeys.recurringInterval
@@ -40,7 +40,7 @@ export const parsePage = (page, env) => {
   };
 };
 
-/** @type {import('./types.mjs').NextDay} */
+/** @type {import('./types.js').NextDay} */
 export const nextDay = (dueTime, current, env) => {
   const newDate = current ? new Date(current) : new Date()
   if (!current) {
@@ -60,7 +60,7 @@ export const nextDay = (dueTime, current, env) => {
   return newDate
 }
 
-/** @type {import('./types.mjs').Log} */
+/** @type {import('./types.js').Log} */
 export const log = (env, ...args) => {
   env.verbose && console.log(...args);
 };

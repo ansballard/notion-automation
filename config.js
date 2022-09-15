@@ -2,7 +2,7 @@ import rc from "rc";
 
 const appName = "nautomation";
 
-/** @type {import('./types.mjs').Config} */
+/** @type {import('./types.js').Config} */
 const defaults = {
   databaseId: process.env.databaseId,
   notionToken: process.env.notionToken,
@@ -24,7 +24,7 @@ const defaults = {
   },
 };
 
-/** @type {import('./types.mjs').Config} */
+/** @type {import('./types.js').Config} */
 const config = rc(appName, defaults);
 export default {
   ...config,

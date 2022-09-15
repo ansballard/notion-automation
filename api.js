@@ -1,12 +1,12 @@
 import _fetch from "node-fetch";
 
-/** @typedef {import('./types.mjs').Block} Block */
-/** @typedef {import('./types.mjs').Page} Page */
-/** @typedef {import('./types.mjs').Database} Database */
+/** @typedef {import('./types.js').Block} Block */
+/** @typedef {import('./types.js').Page} Page */
+/** @typedef {import('./types.js').Database} Database */
 
 /**
- * @param {import('./types.mjs').Env} env
- * @returns {import('./types.mjs').Api}
+ * @param {import('./types.js').Env} env
+ * @returns {import('./types.js').Api}
  */
 export default (env) => ({
   queryDatabase: (filter, sorts) => queryDatabase(filter, sorts, env),
@@ -20,7 +20,7 @@ export default (env) => ({
 const MUTATOR = true;
 const QUERY = false;
 
-/** @type {import('./types.mjs').Fetch} */
+/** @type {import('./types.js').Fetch} */
 export async function fetch(url, init, env, mutable) {
   const body = init?.body;
   const headers = {
@@ -52,7 +52,7 @@ export async function fetch(url, init, env, mutable) {
   return response.json();
 }
 
-/** @type {import('./types.mjs').QueryDatabase} */
+/** @type {import('./types.js').QueryDatabase} */
 export const queryDatabase = async (filter, sorts, env) => {
   env.verbose && console.log("Query database");
   /** @type {Database} */
@@ -72,7 +72,7 @@ export const queryDatabase = async (filter, sorts, env) => {
   return database?.results;
 };
 
-/** @type {import('./types.mjs').GetRecurringPages} */
+/** @type {import('./types.js').GetRecurringPages} */
 export const getRecurringPages = async (env) =>
   queryDatabase(
     {
@@ -85,7 +85,7 @@ export const getRecurringPages = async (env) =>
     env
   );
 
-/** @type {import('./types.mjs').UpdatePage} */
+/** @type {import('./types.js').UpdatePage} */
 export const updatePage = async (id, properties, env) => {
   env.verbose && console.log(`Update Page: ${id}`);
   /** @type {Page} */
@@ -104,7 +104,7 @@ export const updatePage = async (id, properties, env) => {
   return page;
 };
 
-/** @type {import('./types.mjs').GetPage} */
+/** @type {import('./types.js').GetPage} */
 export const getPage = async (id, env) => {
   env.verbose && console.log(`Get Page: ${id}`);
   /** @type {Page} */
@@ -118,7 +118,7 @@ export const getPage = async (id, env) => {
   return page;
 };
 
-/** @type {import('./types.mjs').GetChildBlocks} */
+/** @type {import('./types.js').GetChildBlocks} */
 export const getChildBlocks = async (id, env) => {
   env.verbose && console.log(`Get Child Blocks: ${id}`);
   /** @type {Block} */
@@ -132,7 +132,7 @@ export const getChildBlocks = async (id, env) => {
   return block;
 };
 
-/** @type {import('./types.mjs').addComment} */
+/** @type {import('./types.js').addComment} */
 export const addComment = (id, richText, env) => {
   env.verbose && console.log(`Add Comment: ${id}`);
   return fetch(

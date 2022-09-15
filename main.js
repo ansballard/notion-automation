@@ -1,6 +1,6 @@
-import API from "./api.mjs";
-import Utils from "./utils.mjs";
-import config from "./config.mjs";
+import API from "./api.js";
+import Utils from "./utils.js";
+import config from "./config.js";
 
 import mri from "mri";
 
