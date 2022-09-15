@@ -22,7 +22,7 @@ const DAYS = [
   "Saturday",
 ];
 
-const { getRecurringPages, updatePage, addComment, getChildBlocks } = API({
+const { getRecurringPages, updatePage, addComment } = API({
   ...config,
   dry,
   verbose,
