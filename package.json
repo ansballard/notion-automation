@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "description": "Basic notion API to automate things like recurring tasks",
   "private": true,
-  "main": "main.mjs",
-  "module": "main.mjs",
+  "main": "main.js",
+  "type": "module",
+  "module": "main.js",
   "scripts": {
-    "start": "node -r dotenv/config main.mjs",
+    "start": "node -r dotenv/config main.js",
     "lint": "prettier --check ./"
   },
   "keywords": [],
@@ -20,6 +21,8 @@
   "devDependencies": {
     "@types/node": "^18.7.14",
     "dotenv": "^16.0.2",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.7.1"
   }
 }
