@@ -37,19 +37,14 @@ const pages = await getRecurringPages();
 log(`Iterating ${pages.length} Pages`);
 
 for (const page of pages) {
-  const {
-    recurringInterval,
-    dueTime,
-    userToNotify,
-    currentStatus,
-    skip,
-  } = parsePage(page);
+  const { recurringInterval, dueTime, userToNotify, currentStatus, skip } =
+    parsePage(page);
 
   if (skip) {
     continue;
   }
 
-  let newDueDate = nextDay(dueTime)
+  let newDueDate = nextDay(dueTime);
 
   for (let i = 0; i < DAYS.length; i++) {
     if (recurringInterval.includes(DAYS[newDueDate.getDay()])) {
@@ -116,7 +111,7 @@ for (const page of pages) {
           DAYS[newDueDate.getDay()]
         } isn't set for recurring, checking next day...`
       );
-      newDueDate = nextDay(dueTime, newDueDate)
+      newDueDate = nextDay(dueTime, newDueDate);
     }
   }
 }

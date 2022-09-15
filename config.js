@@ -31,6 +31,6 @@ export default {
   timeZone: {
     ...config.timeZone,
     // offset is a number, if it's invalid just throw up
-    offset: +config.timeZone.offset
-  }
-}
+    offset: +config.timeZone.offset,
+  },
+};

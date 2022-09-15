@@ -5,7 +5,7 @@
 export default (env) => ({
   parsePage: (page) => parsePage(page, env),
   log: (...args) => log(env, ...args),
-  nextDay: (dueTime, current) => nextDay(dueTime, current, env)
+  nextDay: (dueTime, current) => nextDay(dueTime, current, env),
 });
 
 /** @type {import('./types.js').ParsePage} */
@@ -42,7 +42,7 @@ export const parsePage = (page, env) => {
 
 /** @type {import('./types.js').NextDay} */
 export const nextDay = (dueTime, current, env) => {
-  const newDate = current ? new Date(current) : new Date()
+  const newDate = current ? new Date(current) : new Date();
   if (!current) {
     // Determine the next recurrence by setting the time in the current day
     newDate.setHours(
@@ -55,10 +55,10 @@ export const nextDay = (dueTime, current, env) => {
       newDate.setMonth(newDate.getMonth(), newDate.getDate() + 1);
     }
   } else {
-    newDate.setMonth(newDate.getMonth(), newDate.getDate() + 1)
+    newDate.setMonth(newDate.getMonth(), newDate.getDate() + 1);
   }
-  return newDate
-}
+  return newDate;
+};
 
 /** @type {import('./types.js').Log} */
 export const log = (env, ...args) => {

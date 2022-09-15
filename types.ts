@@ -82,7 +82,7 @@ export interface Utils {
     skip: boolean;
   };
   log(...args: any[]): void;
-  nextDay(dueTime: Date, current?: Date): Date
+  nextDay(dueTime: Date, current?: Date): Date;
 }
 
 export type ParsePage = (
